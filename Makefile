@@ -14,7 +14,7 @@ APP      := build/Macofi.app
 DIST     := build/dist
 SIGN_FLAGS := $(if $(filter -,$(SIGN_IDENTITY)),,--options runtime --timestamp)
 
-.PHONY: all app install uninstall config daemon undaemon matugen dist release clean
+.PHONY: all icon app install uninstall config daemon undaemon matugen dist release clean
 
 all: build/macofi
 
@@ -35,11 +35,20 @@ build/macofi: $(SOURCES) Sources/macofi/DefaultConfig.swift build/Version.swift
 	done
 	lipo -create $(foreach a,$(ARCHS),build/macofi-$(a)) -output $@
 
+# Regenerates packaging/Macofi.icns and docs/icon.png from scripts/make-icon.swift.
+icon:
+	@mkdir -p build docs
+	swiftc -O scripts/make-icon.swift -o build/make-icon
+	rm -rf build/Macofi.iconset && build/make-icon build/Macofi.iconset docs/icon.png
+	iconutil -c icns build/Macofi.iconset -o packaging/Macofi.icns
+
 # An .app bundle (LSUIElement, so it never shows in the Dock).
 app: build/macofi
 	@rm -rf $(APP) && mkdir -p $(APP)/Contents/MacOS
 	cp build/macofi $(APP)/Contents/MacOS/macofi
 	cp Info.plist $(APP)/Contents/Info.plist
+	@mkdir -p $(APP)/Contents/Resources
+	cp packaging/Macofi.icns $(APP)/Contents/Resources/Macofi.icns
 	plutil -replace CFBundleShortVersionString -string $(VERSION) $(APP)/Contents/Info.plist
 	plutil -replace CFBundleVersion -string $(VERSION) $(APP)/Contents/Info.plist
 	codesign --force $(SIGN_FLAGS) --sign "$(SIGN_IDENTITY)" $(APP)

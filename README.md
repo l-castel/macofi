@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/icon.png" width="128" alt="macofi icon"></p>
+
 # macofi
 
 A wofi/rofi-style app launcher for macOS: a borderless, centered panel with fuzzy search,

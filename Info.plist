@@ -4,6 +4,8 @@
 <dict>
     <key>CFBundleExecutable</key>
     <string>macofi</string>
+    <key>CFBundleIconFile</key>
+    <string>Macofi</string>
     <key>CFBundleIdentifier</key>
     <string>dev.macofi</string>
     <key>CFBundleName</key>
