@@ -205,7 +205,10 @@ final class Picker: NSObject, NSTextFieldDelegate, NSWindowDelegate {
         field.stringValue = ""
         refilter()
 
-        if #available(macOS 14.0, *) { NSApp.activate() } else { NSApp.activate(ignoringOtherApps: true) }
+        // Not NSApp.activate(): since macOS 14 that only asks, and is refused when the request
+        // doesn't follow a click in this app, leaving the picker unfocused (no typing, and
+        // window-border tools like JankyBorders draw it as inactive). This still takes focus.
+        NSApp.activate(ignoringOtherApps: true)
         panel.makeKeyAndOrderFront(nil)
         panel.makeFirstResponder(field)
         if let editor = field.currentEditor() as? NSTextView {
