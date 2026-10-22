@@ -34,19 +34,6 @@ make config       # copies config.example.toml to ~/.config/macofi/config.toml
 make daemon       # optional: LaunchAgent that runs the background mode at login
 ```
 
-## Releasing
-
-```sh
-echo 0.2.0 > VERSION
-make release GITHUB_REPO=you/macofi                            # ad-hoc signed
-make release GITHUB_REPO=you/macofi ARCHS="arm64 x86_64" \
-  SIGN_IDENTITY="Developer ID Application: …" NOTARY_PROFILE=notary   # signed + notarized
-```
-
-This builds `build/dist/` (`.dmg`, `.zip`, source tarball) and writes `Formula/macofi.rb` and
-`Casks/macofi.rb` with the right checksums, so the repo itself is the Homebrew tap. Upload
-`build/dist/*` to a GitHub release tagged `v0.2.0`, then commit `Formula/` and `Casks/`.
-
 ## Usage
 
 | Command | What it does |
