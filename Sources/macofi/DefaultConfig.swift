@@ -1,0 +1,73 @@
+// Generated from config.example.toml by `make`; edit that file instead.
+let defaultConfigText = #"""
+# macofi configuration
+# Location: ~/.config/macofi/config.toml (or $XDG_CONFIG_HOME/macofi/config.toml)
+# Every key is optional; anything left out uses the default shown here.
+# Colors are #RGB, #RRGGBB or #RRGGBBAA (the last two digits are alpha).
+
+[window]
+width = 640                  # window width in points (height follows from `lines`)
+lines = 8                    # number of visible results
+border_radius = 12           # 0 for sharp corners
+border_width = 2             # 0 for no border
+padding = 14                 # space between the border and the content
+shadow = true
+opacity = 1.0                # whole-window opacity; use a #RRGGBBAA background for a see-through panel only
+vertical_offset = 0          # positive moves the window up from screen center
+close_on_focus_loss = true   # dismiss when you click somewhere else
+
+[input]
+prompt = ""                  # text shown before the input, e.g. ">" or "  "
+placeholder = "Search applications…"
+separator_width = 1          # line between input and results; 0 to hide
+
+[list]
+show_icons = true
+icon_size = 24
+row_height = 36
+row_radius = 8               # corner radius of the selection highlight
+row_spacing = 2
+highlight_matches = true     # color the fuzzy-matched characters
+bold_matches = false
+
+[font]
+family = "monospace"         # "monospace", "system", or any installed font, e.g. "JetBrainsMono Nerd Font"
+size = 15                    # result list
+input_size = 18              # search input
+weight = "regular"           # thin, light, regular, medium, semibold, bold, heavy
+
+[theme]
+# A generated file whose [colors] section overrides the one below, e.g. from matugen
+# (see matugen/macofi-colors.toml in the repo). It's re-read every time macofi opens,
+# so palette changes apply immediately. The [colors] below are the fallback.
+# colors_file = "~/.config/macofi/colors.toml"
+
+[colors]                     # Tokyo Night
+background = "#1a1b26"
+foreground = "#a9b1d6"
+border = "#7aa2f7"
+selection_background = "#292e42"
+selection_foreground = "#c0caf5"
+match = "#7dcfff"
+placeholder = "#565f89"
+prompt = "#7aa2f7"
+cursor = "#c0caf5"
+input_background = "#00000000"
+separator = "#292e42"
+
+[search]
+paths = [
+  "/Applications",
+  "/Applications/Utilities",
+  "/System/Applications",
+  "/System/Applications/Utilities",
+  "~/Applications",
+  "/System/Library/CoreServices/Finder.app",
+]
+exclude = []                 # app names to hide, e.g. ["Chess", "Stickies"]
+sort_by_usage = true         # rank frequently launched apps higher
+
+[daemon]
+hotkey = "alt+space"         # used by `macofi --daemon`; modifiers: cmd, alt, ctrl, shift
+reload_hotkey = "alt+shift+r" # full reload: re-registers hotkeys, reloads history; "" to disable
+"""#

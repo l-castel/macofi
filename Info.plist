@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleExecutable</key>
+    <string>macofi</string>
+    <key>CFBundleIdentifier</key>
+    <string>dev.macofi</string>
+    <key>CFBundleName</key>
+    <string>Macofi</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>0.1.0</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>13.0</string>
+    <key>LSUIElement</key>
+    <true/>
+    <!-- Only set when opened via LaunchServices (Finder, Spotlight, Login Items, `open`),
+         never when the binary is run directly: that's how macofi picks background mode. -->
+    <key>LSEnvironment</key>
+    <dict>
+        <key>MACOFI_LAUNCHSERVICES</key>
+        <string>1</string>
+    </dict>
+</dict>
+</plist>
