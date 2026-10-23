@@ -15,12 +15,9 @@ func drawIcon(in ctx: CGContext, size: CGFloat, rounded: Bool) {
 
     if rounded {
         let tile = squircle(in: CGRect(x: 100, y: 100, width: 824, height: 824), exponent: 5)
-        ctx.saveGState()
-        ctx.setShadow(offset: CGSize(width: 0, height: -12), blur: 28, color: CGColor(gray: 0, alpha: 0.35))
         ctx.addPath(tile)
-        ctx.setFillColor(CGColor(srgbRed: 0.10, green: 0.106, blue: 0.149, alpha: 1))
+        ctx.setFillColor(CGColor(srgbRed: 0.102, green: 0.106, blue: 0.149, alpha: 1))
         ctx.fillPath()
-        ctx.restoreGState()
         // Hairline edge so the tile reads on dark backgrounds too.
         ctx.saveGState()
         ctx.addPath(tile)
@@ -37,44 +34,22 @@ func drawIcon(in ctx: CGContext, size: CGFloat, rounded: Bool) {
     drawArtwork(in: ctx)
 }
 
-/// The full-bleed 1024x1024 artwork.
+/// The full-bleed 1024x1024 artwork: flat colours only (Tokyo Night), no gradients or glow.
 func drawArtwork(in ctx: CGContext) {
-    ctx.saveGState()
-    let background = CGGradient(colorsSpace: CGColorSpace(name: CGColorSpace.sRGB), colors: [
-        CGColor(srgbRed: 0.165, green: 0.180, blue: 0.259, alpha: 1), // #2a2e42 top
-        CGColor(srgbRed: 0.086, green: 0.090, blue: 0.129, alpha: 1), // #161721 bottom
-    ] as CFArray, locations: [0, 1])!
-    ctx.drawLinearGradient(background, start: CGPoint(x: 512, y: 1024), end: CGPoint(x: 512, y: 0), options: [])
-    ctx.restoreGState()
+    ctx.setFillColor(CGColor(srgbRed: 0.102, green: 0.106, blue: 0.149, alpha: 1)) // #1a1b26
+    ctx.fill(CGRect(x: 0, y: 0, width: 1024, height: 1024))
 
-    // The glyph: a chevron and a cursor bar, filled with the accent gradient and a soft glow.
-    let glyph = CGMutablePath()
+    // A prompt chevron in the accent colour, and a block cursor in the text colour.
     let chevron = CGMutablePath()
-    chevron.move(to: CGPoint(x: 322, y: 652))
-    chevron.addLine(to: CGPoint(x: 486, y: 512))
-    chevron.addLine(to: CGPoint(x: 322, y: 372))
-    glyph.addPath(chevron.copy(strokingWithWidth: 68, lineCap: .round, lineJoin: .round, miterLimit: 10))
-    glyph.addPath(CGPath(roundedRect: CGRect(x: 548, y: 338, width: 168, height: 64),
-                         cornerWidth: 32, cornerHeight: 32, transform: nil))
-
-    let accent = CGGradient(colorsSpace: CGColorSpace(name: CGColorSpace.sRGB), colors: [
-        CGColor(srgbRed: 0.490, green: 0.812, blue: 1.0, alpha: 1),   // #7dcfff
-        CGColor(srgbRed: 0.478, green: 0.635, blue: 0.969, alpha: 1), // #7aa2f7
-        CGColor(srgbRed: 0.733, green: 0.604, blue: 0.969, alpha: 1), // #bb9af7
-    ] as CFArray, locations: [0, 0.55, 1])!
-
-    ctx.saveGState()
-    ctx.setShadow(offset: .zero, blur: 60, color: CGColor(srgbRed: 0.478, green: 0.635, blue: 0.969, alpha: 0.55))
-    ctx.addPath(glyph)
-    ctx.setFillColor(CGColor(srgbRed: 0.478, green: 0.635, blue: 0.969, alpha: 1))
+    chevron.move(to: CGPoint(x: 300, y: 660))
+    chevron.addLine(to: CGPoint(x: 480, y: 512))
+    chevron.addLine(to: CGPoint(x: 300, y: 364))
+    ctx.addPath(chevron.copy(strokingWithWidth: 72, lineCap: .square, lineJoin: .miter, miterLimit: 10))
+    ctx.setFillColor(CGColor(srgbRed: 0.478, green: 0.635, blue: 0.969, alpha: 1)) // #7aa2f7
     ctx.fillPath()
-    ctx.restoreGState()
 
-    ctx.saveGState()
-    ctx.addPath(glyph)
-    ctx.clip()
-    ctx.drawLinearGradient(accent, start: CGPoint(x: 300, y: 680), end: CGPoint(x: 730, y: 330), options: [])
-    ctx.restoreGState()
+    ctx.setFillColor(CGColor(srgbRed: 0.753, green: 0.792, blue: 0.961, alpha: 1)) // #c0caf5
+    ctx.fill(CGRect(x: 556, y: 328, width: 172, height: 72))
 }
 
 /// |x|^n + |y|^n = 1, the continuous-curvature shape macOS uses for app icons.

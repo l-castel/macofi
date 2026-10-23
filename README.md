@@ -29,7 +29,7 @@ blocks the first launch. Allow it in System Settings › Privacy & Security › 
 **From source** (needs the Xcode Command Line Tools: `xcode-select --install`):
 
 ```sh
-make install      # ~/Applications/Macofi.app and ~/.local/bin/macofi
+make install      # /Applications/Macofi.app and ~/.local/bin/macofi
 make config       # copies config.example.toml to ~/.config/macofi/config.toml
 make daemon       # optional: LaunchAgent that runs the background mode at login
 ```
@@ -84,27 +84,47 @@ Daemon warnings are also written to `~/Library/Logs/macofi.log`.
 Colors accept `#RGB`, `#RRGGBB` or `#RRGGBBAA`. Mistakes such as unknown keys, bad colors or
 missing fonts are reported on stderr, and the default is used in their place.
 
-### Wallpaper-based colors (matugen)
+### Wallpaper-based colors (matugen, optional)
 
-`[theme] colors_file` points at a generated file whose `[colors]` section overrides the main
-config. Any color it doesn't define falls back to `[colors]`. Because the config is re-read on
-every open, a new palette applies the next time the picker appears, with no restart.
+macofi works on its own: the `[colors]` in your config (Tokyo Night by default) are the
+theme. `[theme] colors_file` can point at a generated file whose `[colors]` section
+overrides them, for example one written by pywal. It defaults to
+`~/.config/macofi/colors.toml` when that file exists.
 
-```sh
-make matugen   # installs the template, registers it with matugen, and enables colors_file
-```
+If [matugen](https://github.com/InioX/matugen) is installed, macofi can follow your
+matugen theme. It asks first, once:
 
-which sets this in your config (run `make config` first, or add it by hand):
+> matugen is installed. Allow macofi to add its template to *&lt;matugen config&gt;* so its
+> colours follow your matugen theme?
 
-```toml
-[theme]
-colors_file = "~/.config/macofi/colors.toml"
-```
+You'll see this during `make install` (in the terminal), or as a dialog the first time the
+macofi daemon starts if you installed with Homebrew (Homebrew installs can't prompt or
+write to your home directory). Your answer is saved in `~/.config/macofi/matugen-consent`.
+To change it, run `macofi --setup-matugen` (add `--yes` or `--no` to skip the question),
+or `make matugen` from a source checkout.
 
-Every `matugen image …` / `matugen color …` run now also writes `~/.config/macofi/colors.toml`.
-To change which Material You roles go where (e.g. a translucent `background`), edit
-`~/.config/matugen/templates/macofi-colors.toml`. The same mechanism works with pywal or any
-other tool that can render a template.
+If you answer yes, macofi:
+
+1. writes its template to `~/.config/macofi/matugen-template.toml`. An existing file is
+   kept, so you can edit it to pick other Material You roles, such as a translucent
+   `background`.
+2. appends this block to your matugen config, unless it's already there:
+   ```toml
+   [templates.macofi]
+   input_path = '~/.config/macofi/matugen-template.toml'
+   output_path = '~/.config/macofi/colors.toml'
+   ```
+3. renders `colors.toml` once from your current wallpaper, so it matches straight away.
+   Only macofi's template is rendered, so other apps and matugen hooks aren't run.
+
+From then on, every `matugen image …` / `matugen color …` run rewrites `colors.toml`.
+macofi re-reads it each time the picker opens.
+
+No macOS permission is involved. The matugen config is a regular file in your home
+directory. The config used is `$MATUGEN_CONFIG` if set. Otherwise it's matugen's macOS
+default, `~/Library/Application Support/com.InioX.matugen/config.toml`, or
+`~/.config/matugen/config.toml` if only that one exists (for setups that call
+`matugen -c`). To undo, remove the `[templates.macofi]` block.
 
 An Omarchy-style look with sharp corners and no icons:
 

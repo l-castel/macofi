@@ -35,9 +35,10 @@ input_size = 18              # search input
 weight = "regular"           # thin, light, regular, medium, semibold, bold, heavy
 
 [theme]
-# A generated file whose [colors] section overrides the one below, e.g. from matugen
-# (see matugen/macofi-colors.toml in the repo). It's re-read every time macofi opens,
-# so palette changes apply immediately. The [colors] below are the fallback.
+# A generated file whose [colors] section overrides the one below, e.g. from pywal.
+# Defaults to ~/.config/macofi/colors.toml when that exists (matugen writes it once you
+# allow it; see `macofi --setup-matugen`). Re-read every time macofi opens, so palette
+# changes apply immediately. The [colors] below are the fallback.
 # colors_file = "~/.config/macofi/colors.toml"
 
 [colors]                     # Tokyo Night

@@ -13,6 +13,12 @@ cask "macofi" do
   app "Macofi.app"
   binary "#{appdir}/Macofi.app/Contents/MacOS/macofi"
 
+  # The app isn't notarized, so clear the download quarantine flag; otherwise macOS
+  # blocks it until it's allowed in System Settings › Privacy & Security.
+  postflight_steps do
+    run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "{{appdir}}/Macofi.app"], must_succeed: false
+  end
+
   uninstall quit: "dev.macofi"
 
   zap trash: [
@@ -23,5 +29,9 @@ cask "macofi" do
   caveats <<~EOS
     Open Macofi from Applications to run it in the background (default hotkey alt+space),
     and add it to System Settings › General › Login Items to start it at login.
+
+    Theme: the [colors] in your config (Tokyo Night by default). If matugen is
+    installed, the first daemon start asks whether macofi may add its template to
+    your matugen config (or run: macofi --setup-matugen).
   EOS
 end

@@ -1,5 +1,5 @@
 PREFIX   ?= $(HOME)/.local
-APPDIR   ?= $(HOME)/Applications
+APPDIR   ?= /Applications
 VERSION  := $(shell cat VERSION)
 # Space-separated; e.g. ARCHS="arm64 x86_64" for a universal binary.
 ARCHS    ?= $(shell uname -m)
@@ -26,7 +26,11 @@ build/Version.swift: VERSION
 	@mkdir -p build
 	echo 'let macofiVersion = "$(VERSION)"' > $@
 
-build/macofi: $(SOURCES) Sources/macofi/DefaultConfig.swift build/Version.swift
+build/MatugenTemplate.swift: matugen/macofi-colors.toml
+	@mkdir -p build
+	{ echo 'let matugenTemplate = #"""'; cat $<; echo '"""#'; } > $@
+
+build/macofi: $(SOURCES) Sources/macofi/DefaultConfig.swift build/Version.swift build/MatugenTemplate.swift
 	@mkdir -p build
 	@for arch in $(ARCHS); do \
 	  echo "swiftc ($$arch)"; \
@@ -59,6 +63,7 @@ install: app
 	cp -R $(APP) $(APPDIR)/Macofi.app
 	ln -sf $(APPDIR)/Macofi.app/Contents/MacOS/macofi $(PREFIX)/bin/macofi
 	@echo "installed: $(APPDIR)/Macofi.app and $(PREFIX)/bin/macofi"
+	@[ -t 0 ] && $(APPDIR)/Macofi.app/Contents/MacOS/macofi --setup-matugen || true
 
 config:
 	@mkdir -p $(HOME)/.config/macofi
@@ -86,20 +91,9 @@ undaemon:
 	-launchctl bootout gui/$$(id -u) $(AGENT)
 	rm -f $(AGENT)
 
-MATUGEN := $(HOME)/.config/matugen
-
-# Register the colors template with matugen, so every recolour also writes
-# ~/.config/macofi/colors.toml, and point [theme] colors_file at it.
-matugen:
-	@mkdir -p $(MATUGEN)/templates $(HOME)/.config/macofi
-	cp matugen/macofi-colors.toml $(MATUGEN)/templates/macofi-colors.toml
-	@touch $(MATUGEN)/config.toml
-	@if grep -q '^\[templates.macofi\]' $(MATUGEN)/config.toml; then echo "matugen template already registered"; \
-	else printf "\n[templates.macofi]\ninput_path = '~/.config/matugen/templates/macofi-colors.toml'\noutput_path = '~/.config/macofi/colors.toml'\n" >> $(MATUGEN)/config.toml \
-	  && echo "registered [templates.macofi] in $(MATUGEN)/config.toml"; fi
-	@if [ -f $(HOME)/.config/macofi/config.toml ] && grep -q '^# *colors_file' $(HOME)/.config/macofi/config.toml; then \
-	  sed -i '' 's|^# *colors_file *=.*|colors_file = "~/.config/macofi/colors.toml"|' $(HOME)/.config/macofi/config.toml \
-	  && echo "enabled colors_file in ~/.config/macofi/config.toml"; fi
+# Ask (again) whether macofi may register its template with matugen. See README.
+matugen: build/macofi
+	build/macofi --setup-matugen
 
 uninstall: undaemon
 	rm -rf $(APPDIR)/Macofi.app $(PREFIX)/bin/macofi

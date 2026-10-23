@@ -110,10 +110,11 @@ struct Config {
         collectedWarnings.removeAll()
         var config = Config()
         let file = path.map { ($0 as NSString).expandingTildeInPath } ?? defaultPath
-        guard let text = try? String(contentsOfFile: file, encoding: .utf8) else {
+        // No config file is fine: defaults, plus the matugen colours if there are any.
+        let text = (try? String(contentsOfFile: file, encoding: .utf8)) ?? {
             if path != nil { warn("could not read config at \(file), using defaults") }
-            return config
-        }
+            return ""
+        }()
         let table: [String: TOMLValue]
         do {
             table = try parseTOML(text)
@@ -126,6 +127,8 @@ struct Config {
         }
         if let colorsFile = config.colorsFile {
             config.applyColorsFile((colorsFile as NSString).expandingTildeInPath)
+        } else if FileManager.default.fileExists(atPath: Matugen.outputPath) {
+            config.applyColorsFile(Matugen.outputPath) // written by matugen once allowed (see Matugen.swift)
         }
         config.clampToSaneRanges()
         _ = config.font // resolve now so a missing font is reported with the other warnings

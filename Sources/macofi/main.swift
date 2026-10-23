@@ -15,6 +15,10 @@ usage: macofi [options]
   --show            ask the running daemon to show the picker (instant;
                     falls back to a one-shot picker if no daemon runs)
   --print-config    print the default config file with all options
+  --setup-matugen [--yes|--no]
+                    if matugen is installed, ask whether macofi may add its
+                    template to the matugen config (asked once on first
+                    daemon start otherwise)
   --version         print the version
   -h, --help        show this help
 """
@@ -69,6 +73,11 @@ while let arg = args.popFirst() {
     case "--placeholder": placeholderOverride = args.popFirst()
     case "--prompt", "-p": promptOverride = args.popFirst()
     case "--print-config": print(defaultConfigText, terminator: ""); exit(0)
+    case "--setup-matugen":
+        let answer: Bool? = args.first == "--yes" ? true : args.first == "--no" ? false : nil
+        if answer != nil { args.removeFirst() }
+        if answer == nil && isatty(STDIN_FILENO) == 0 { warn("--setup-matugen needs a terminal, or --yes / --no"); exit(2) }
+        Matugen.setupFromTerminal(answer: answer); exit(0)
     case "-h", "--help": print(usage); exit(0)
     default: warn("unknown option '\(arg)'"); print(usage); exit(2)
     }
@@ -120,6 +129,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             signal(SIGUSR1, SIG_IGN)
             reloadSignal.setEventHandler { [weak self] in self?.reload() }
             reloadSignal.resume()
+            if Matugen.needsAnswer { DispatchQueue.main.async { Matugen.askWithAlert() } }
         }
     }
 

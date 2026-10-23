@@ -31,6 +31,10 @@ class Macofi < Formula
 
       Config: ~/.config/macofi/config.toml. To start from the full example:
         mkdir -p ~/.config/macofi && cp #{opt_pkgshare}/config.example.toml ~/.config/macofi/config.toml
+
+      Theme: the [colors] in your config (Tokyo Night by default). If matugen is
+      installed, the first daemon start asks whether macofi may add its template to
+      your matugen config (or run: macofi --setup-matugen).
     EOS
   end
 
