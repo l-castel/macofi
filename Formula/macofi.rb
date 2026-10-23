@@ -2,8 +2,8 @@
 class Macofi < Formula
   desc "Configurable wofi/rofi-style application launcher for macOS"
   homepage "https://github.com/l-castel/macofi"
-  url "https://github.com/l-castel/macofi/releases/download/v0.1.2/macofi-0.1.2-src.tar.gz"
-  sha256 "64972d4d04d547eb077dc3b4fb23ee6dacc9369f63ff128de5f2a4f6cde8c7b1"
+  url "https://github.com/l-castel/macofi/releases/download/v0.2.0/macofi-0.2.0-src.tar.gz"
+  sha256 "4cdbed866c085ea575a03e2226402b1db2c76c8abbcf09038a1264a3e3ea6587"
   license "MIT"
   head "https://github.com/l-castel/macofi.git", branch: "main"
 
