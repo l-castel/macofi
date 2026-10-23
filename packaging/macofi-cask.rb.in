@@ -8,7 +8,7 @@ cask "macofi" do
   desc "Configurable wofi/rofi-style application launcher"
   homepage "https://github.com/@REPO@"
 
-  depends_on macos: ">= :ventura"
+  depends_on macos: :ventura
 
   app "Macofi.app"
   binary "#{appdir}/Macofi.app/Contents/MacOS/macofi"
